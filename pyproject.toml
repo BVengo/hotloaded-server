@@ -8,6 +8,7 @@ packages = [{include = "hotloaded_server"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+hotloaded-plugins = {git = "git@github.com:BVengo/hotloaded-plugins.git"}
 
 
 [build-system]
