@@ -3,6 +3,16 @@ My 'Hotloading Plugins' project consists of the two repositories 'hotloaded-serv
 
 See [Hotloaded Plugins](https://github.com/BVengo/hotloaded-plugins) for the other repository.
 
+<img src="gui.png" width="450">
+
+## Usage
+1. Clone and fork both this repository and [Hotloaded Plugins](https://github.com/BVengo/hotloaded-plugins)
+2. Update the dependency in this package to point to your own hotloaded-plugins version.
+3. Install both as you would any other poetry project
+4. Run `poetry run main` in your hotloaded-server to load up the GUI. It should show a list of whichever plugins were in your hotloaded-plugins package at the time of setup.
+5. Add, modify, or delete plugins in the hotloaded-plugins package. Push the changes to your repository.
+6. Press 'Reload' in the GUI to update your venv's version of the hotloaded-plugins and dynamically load in your changes.
+
 ## Use-Case
 For projects that are dependent on short python scripts which are frequently updated (and need to be immediately deployed), but also need to avoid any downtime. 
 
@@ -18,17 +28,13 @@ Cons:
 
 
 ### Other Alternatives
-It would be amiss of me to not contemplate other methods of handling this situation as well. The alternative methods I thought of were:
-
 - Reading directly from another project directory, on the same file system
 - Storing the scripts in a database, to be dynamically read in
 
-Both of these have similar pros and cons.
-
-Pros:
+**Pros:**
 - Easy to setup
 
-Cons:
+**Cons:**
 - Plugins not listed as a project dependency, despite being one
 - Requires additional setup (directory or database setup, having a variable pointing to where it's stored)
 - Need to add all plugin dependencies into primary project as well - can be easily missed

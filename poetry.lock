@@ -14,7 +14,7 @@ develop = false
 type = "git"
 url = "git@github.com:BVengo/hotloaded-plugins.git"
 reference = "HEAD"
-resolved_reference = "9eaf92ca850eed53ae488cbf72903292104966b3"
+resolved_reference = "197a1efc43212d56e832fdcd56e7f6002c34badb"
 
 [metadata]
 lock-version = "2.0"

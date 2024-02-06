@@ -1,64 +1,16 @@
-import importlib
-import os
-import subprocess
-import re
 import tkinter as tk
 from tkinter import ttk
-from hotloaded_plugins import plugins
+from .reload_logic import reload_plugins, get_plugins_list, get_plugins_package
+
 
 WINDOW_WIDTH = 600
-WINDOW_HEIGHT = 600
-
-PLUGINS_PACKAGE = "hotloaded_plugins"
-
-plugin_pattern = re.compile(r'^plugin[0-9]+\.py$')
-plugins_list = []
+WINDOW_HEIGHT = 400
 
 
-def reload_plugins():
-    # Update and reload the plugins package
-    try:
-        subprocess.run(["poetry", "update", PLUGINS_PACKAGE], check=True)
-        print(f"Successfully updated package '{PLUGINS_PACKAGE}'.")
-    except subprocess.CalledProcessError as e:
-        print(f"Failed to update package '{PLUGINS_PACKAGE}'. Error: {e}")
-
-    importlib.reload(plugins)
-
-    print(f"Reloaded package '{PLUGINS_PACKAGE}'")
-
-
-def store_plugins():
+def populate_table(table, plugins_list):
     """
-    Dynamically load the plugins from hotloaded_plugins and store them in the
-    plugins list
+    Populates the table with a list of plugins and their descriptions
     """
-    plugins_list.clear()
-
-    package_path = os.path.dirname(os.path.abspath(plugins.__file__))
-    plugin_files = [f for f in os.listdir(package_path)
-                    if plugin_pattern.match(f)]
-
-    for file in plugin_files:
-
-        # Load the plugin module
-        module_name = file[:-3]
-        module_path = f"hotloaded_plugins.plugins.{module_name}"
-        imported_module = importlib.import_module(module_path)
-
-        # Store the plugin class
-        class_name = module_name.capitalize()
-
-        try:
-            plugin_class = getattr(imported_module, class_name)
-            plugins_list.append(plugin_class())
-        except AttributeError:
-            print(f"Could not find class {class_name} in module {module_path}")
-
-    print(f"Loaded {len(plugins_list)} plugins")
-
-
-def populate_table(table):
     # Clear existing data in the table
     for item in table.get_children():
         table.delete(item)
@@ -72,18 +24,25 @@ def populate_table(table):
 
 
 def handle_reload_click(root, table):
+    """
+    When 'Reload' is pressed, fully reload the plugins package and
+    update the table with the new list.
+    """
     root.config(cursor="watch")
     root.update()
 
-    reload_plugins()
-    store_plugins()
-    populate_table(table)
+    plugins_module = reload_plugins()
+    plugins_list = get_plugins_list(plugins_module)
+    populate_table(table, plugins_list)
 
     root.config(cursor="")
     root.update()
 
 
-def build_gui():
+def build_gui(plugins_list):
+    """
+    Build a basic tkinter GUI to display the list of plugins
+    """
     root = tk.Tk()
     root.title("Hotloaded Server")
     root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
@@ -111,7 +70,7 @@ def build_gui():
         table.heading(col, text=col.capitalize())
 
     # Insert data
-    populate_table(table)
+    populate_table(table, plugins_list)
 
     # Save the table
     table.pack(expand=True, fill='both')
@@ -128,8 +87,10 @@ def run():
     """
     Load the plugins from hotloaded_plugins and then build the GUI
     """
-    store_plugins()
-    build_gui()
+    plugins_module = get_plugins_package()
+    plugins_list = get_plugins_list(plugins_module)
+
+    build_gui(plugins_list)
 
 
 if __name__ == "__main__":
