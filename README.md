@@ -24,17 +24,15 @@ Pros:
 
 Cons:
 - Unpredictable behaviour if not handled correctly (in-memory objects will still be old)
-- Requires two repositories instead of one project that gets re-deployed with a short downtime period
+- Requires two repositories instead of one project that gets re-deployed with a short downtime period. Simply having two services would be more ideal.
 
 
 ### Other Alternatives
+There's an obvious alternative to this system which is far more stable - have 2 API services, where #1 is always up and queues interactions with #2.
+However this is a fairly normal approach, and I wanted to try out something new.
+
+Other ideas were:
 - Reading directly from another project directory, on the same file system
 - Storing the scripts in a database, to be dynamically read in
 
-**Pros:**
-- Easy to setup
-
-**Cons:**
-- Plugins not listed as a project dependency, despite being one
-- Requires additional setup (directory or database setup, having a variable pointing to where it's stored)
-- Need to add all plugin dependencies into primary project as well - can be easily missed
+These both felt _too_ unstable, given the plugins were no longer listed as project dependencies and both required an arbitrary storage solution.
